@@ -1,0 +1,39 @@
+@page
+@model HEMS_NamNMSE182871.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - HEMS</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; }
+        .field { margin-bottom: 12px; }
+        label { display:block; margin-bottom: 4px; }
+        input { padding: 6px; width: 260px; }
+        .error { color: #c00; }
+    </style>
+    </head>
+<body>
+    <h2>Login</h2>
+    <form method="post">
+        <div asp-validation-summary="All" class="error"></div>
+        <div class="field">
+            <label asp-for="Input.EmailAddress">Email</label>
+            <input asp-for="Input.EmailAddress" required />
+            <span asp-validation-for="Input.EmailAddress" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Input.StoreAccountPassword">Password</label>
+            <input asp-for="Input.StoreAccountPassword" type="password" required />
+            <span asp-validation-for="Input.StoreAccountPassword" class="error"></span>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
+

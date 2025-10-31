@@ -1,0 +1,127 @@
+@page
+@model HEMS_NamNMSE182871.Pages.Equipment.IndexModel
+@{
+    ViewData["Title"] = "Equipment List";
+}
+@Html.AntiForgeryToken()
+
+<h2>Equipment List</h2>
+
+@if (Model.IsManager)
+{
+    <p><a asp-page="Create" class="btn btn-primary">Create New</a></p>
+}
+
+<form method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-3">
+            <label>Technical Specifications:</label>
+            <input type="text" name="technicalSpec" value="@Model.TechnicalSpec" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label>Warranty Expiration:</label>
+            <input type="date" name="warrantyExp" value="@Model.WarrantyExp?.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label>Maintenance Instructions:</label>
+            <input type="text" name="maintenanceInst" value="@Model.MaintenanceInst" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-secondary d-block">Search</button>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Equipment Name</th>
+            <th>Supplier</th>
+            <th>Location</th>
+            <th>Warranty Expiration</th>
+            <th>Date Added</th>
+            @if (Model.IsManager)
+            {
+                <th>Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody id="equipmentTableBody">
+        @foreach (var item in Model.EquipmentList.Items)
+        {
+            <tr id="row-@item.EquipmentID">
+                <td>@item.EquipmentName</td>
+                <td>@item.SupplierName</td>
+                <td>@item.LocationInHospital</td>
+                <td>@item.WarrantyExpiration.ToString("yyyy-MM-dd")</td>
+                <td>@item.DateAdded?.ToString("yyyy-MM-dd HH:mm")</td>
+                @if (Model.IsManager)
+                {
+                    <td>
+                        <a asp-page="Edit" asp-route-id="@item.EquipmentID" class="btn btn-sm btn-warning">Edit</a>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteEquipment(@item.EquipmentID)">Delete</button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    @if (Model.EquipmentList.Page > 1)
+    {
+        <a asp-page="Index" asp-route-currentPage="@(Model.EquipmentList.Page - 1)" 
+           asp-route-technicalSpec="@Model.TechnicalSpec" 
+           asp-route-warrantyExp="@Model.WarrantyExp?.ToString("yyyy-MM-dd")" 
+           asp-route-maintenanceInst="@Model.MaintenanceInst" class="btn btn-secondary">Previous</a>
+    }
+    
+    <span id="pagerText">Page @Model.EquipmentList.Page of @Model.EquipmentList.TotalPages (@Model.EquipmentList.TotalCount total)</span>
+    
+    @if (Model.EquipmentList.Page < Model.EquipmentList.TotalPages)
+    {
+        <a asp-page="Index" asp-route-currentPage="@(Model.EquipmentList.Page + 1)" 
+           asp-route-technicalSpec="@Model.TechnicalSpec" 
+           asp-route-warrantyExp="@Model.WarrantyExp?.ToString("yyyy-MM-dd")" 
+           asp-route-maintenanceInst="@Model.MaintenanceInst" class="btn btn-secondary">Next</a>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/equipmentHub")
+        .build();
+    connection.start().catch(console.error);
+
+    function removeEquipmentRow(id){
+        const row=document.getElementById("row-"+id);
+        if(row){
+            row.remove();
+            
+            const pager=document.getElementById('pagerText');
+            if(pager){
+                const m=pager.textContent.match(/\((\d+) total\)/);
+                if(m){
+                    const current=parseInt(m[1]);
+                    const next=Math.max(0, current-1);
+                    pager.textContent=pager.textContent.replace(`(${m[1]} total)`, `(${next} total)`);
+                }
+            }
+        }
+    }
+
+    connection.on("EquipmentDeleted", function(id){ removeEquipmentRow(id); });
+
+    async function deleteEquipment(id){
+        if(!confirm('Are you sure you want to delete this equipment?')) return;
+        try{
+            const res=await fetch(`?handler=Delete&id=${id}`,{method:'POST'});
+            const r=await res.json();
+            if(r.success){ removeEquipmentRow(id); }
+            else{ alert(r.message||'Failed to delete equipment'); }
+        }catch(e){ console.error(e); alert('Error'); }
+    }
+</script>
+

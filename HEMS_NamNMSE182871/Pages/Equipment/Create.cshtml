@@ -1,0 +1,75 @@
+@page
+@model HEMS_NamNMSE182871.Pages.Equipment.CreateModel
+@{
+    ViewData["Title"] = "Create Equipment";
+}
+
+<h2>Create Equipment</h2>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+    <div class="mb-3">
+        <label asp-for="Equipment.EquipmentName" class="form-label">Equipment Name</label>
+        <input asp-for="Equipment.EquipmentName" class="form-control" />
+        <span asp-validation-for="Equipment.EquipmentName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Equipment.TechnicalSpecifications" class="form-label">Technical Specifications</label>
+        <textarea asp-for="Equipment.TechnicalSpecifications" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Equipment.TechnicalSpecifications" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Equipment.Category" class="form-label">Category</label>
+        <input asp-for="Equipment.Category" class="form-control" />
+        <span asp-validation-for="Equipment.Category" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Equipment.ModelNumber" class="form-label">Model Number</label>
+        <input asp-for="Equipment.ModelNumber" class="form-control" />
+        <span asp-validation-for="Equipment.ModelNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Equipment.SupplierID" class="form-label">Supplier</label>
+        <select asp-for="Equipment.SupplierID" asp-items="Model.Suppliers" class="form-select">
+            <option value="">-- Select Supplier --</option>
+        </select>
+        <span asp-validation-for="Equipment.SupplierID" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Equipment.PurchaseDate" class="form-label">Purchase Date</label>
+        <input asp-for="Equipment.PurchaseDate" type="date" class="form-control" />
+        <span asp-validation-for="Equipment.PurchaseDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Equipment.WarrantyExpiration" class="form-label">Warranty Expiration</label>
+        <input asp-for="Equipment.WarrantyExpiration" type="date" class="form-control" />
+        <span asp-validation-for="Equipment.WarrantyExpiration" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Equipment.MaintenanceInstructions" class="form-label">Maintenance Instructions</label>
+        <textarea asp-for="Equipment.MaintenanceInstructions" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Equipment.MaintenanceInstructions" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Equipment.LocationInHospital" class="form-label">Location In Hospital</label>
+        <input asp-for="Equipment.LocationInHospital" class="form-control" />
+        <span asp-validation-for="Equipment.LocationInHospital" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
